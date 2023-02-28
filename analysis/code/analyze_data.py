@@ -11,6 +11,13 @@ def main():
     with open('output/regression.csv', 'w') as f:
         f.write('<tab:regression>' + '\n')
         formatted.to_csv(f, sep = '\t', index = False, header = False)
+
+    fit = run_regression2(df)
+    formatted = format_model(fit)
+    
+    with open('output/regression2.csv', 'w') as f:
+        f.write('<tab:regression>' + '\n')
+        formatted.to_csv(f, sep = '\t', index = False, header = False)
     
 def import_data():
     df = pd.read_csv('input/data_cleaned.csv')
@@ -21,6 +28,14 @@ def import_data():
 def run_regression(df):
     df = df.set_index(['county_id', 'year'])
     model = PanelOLS.from_formula('chips_sold ~ 1 + post_tv + EntityEffects + TimeEffects', data = df)
+    fit = model.fit()
+    
+    return(fit)
+
+def run_regression2(df):
+    subset = df[df['year'] >= 1960]
+    subset = subset.set_index(['county_id', 'year'])
+    model = PanelOLS.from_formula('chips_sold ~ 1 + post_tv + EntityEffects + TimeEffects', data = subset)
     fit = model.fit()
     
     return(fit)
